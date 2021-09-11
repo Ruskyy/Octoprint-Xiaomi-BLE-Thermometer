@@ -1,79 +1,58 @@
-# coding=utf-8
-from __future__ import absolute_import
-
-### (Don't forget to remove me)
-# This is a basic skeleton for your plugin's __init__.py. You probably want to adjust the class name of your plugin
-# as well as the plugin mixins it's subclassing from. This is really just a basic skeleton to get you started,
-# defining your plugin as a template plugin, settings and asset plugin. Feel free to add or remove mixins
-# as necessary.
-#
-# Take a look at the documentation on what other plugin mixins are available.
-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, unicode_literals
+import sys
+import bluetooth._bluetooth as bluez
+from datetime import datetime
+from bluetooth_utils import (toggle_device, enable_le_scan,
+                             parse_le_advertising_events,
+                             disable_le_scan, raw_packet_to_str)
 import octoprint.plugin
 
-class BlexiaomiPlugin(octoprint.plugin.SettingsPlugin,
-    octoprint.plugin.AssetPlugin,
-    octoprint.plugin.TemplatePlugin
-):
-
-    ##~~ SettingsPlugin mixin
+class XiaomiBLE(octoprint.plugin.StartupPlugin,
+                       octoprint.plugin.TemplatePlugin,
+                       octoprint.plugin.SettingsPlugin):
+    def on_after_startup(self):
+        self._logger.info("RUSKLYYYYYYYYYYYYYYYYYYYY OWO! (more: %s)" % self._settings.get(["url"]))
 
     def get_settings_defaults(self):
-        return {
-            # put your plugin's default settings here
-        }
+        return dict(url="https://en.wikipedia.org/wiki/Hello_world")
 
-    ##~~ AssetPlugin mixin
+    def get_template_vars(self):
+        return dict(url=self._settings.get(["url"]))
 
-    def get_assets(self):
-        # Define your plugin's asset files to automatically include in the
-        # core UI here.
-        return {
-            "js": ["js/BLEXiaomi.js"],
-            "css": ["css/BLEXiaomi.css"],
-            "less": ["less/BLEXiaomi.less"]
-        }
+    def test():
+    # Use 0 for hci0
+    dev_id = 0
+    toggle_device(dev_id, True)
 
-    ##~~ Softwareupdate hook
+    try:
+        sock = bluez.hci_open_dev(dev_id)
+    except:
+        print("Cannot open bluetooth device %i" % dev_id)
+        raise
 
-    def get_update_information(self):
-        # Define the configuration for your plugin to use with the Software Update
-        # Plugin here. See https://docs.octoprint.org/en/master/bundledplugins/softwareupdate.html
-        # for details.
-        return {
-            "BLEXiaomi": {
-                "displayName": "Blexiaomi Plugin",
-                "displayVersion": self._plugin_version,
+    # Set filter to "True" to see only one packet per device
+    enable_le_scan(sock, filter_duplicates=False)
 
-                # version check: github repository
-                "type": "github_release",
-                "user": "Rusky",
-                "repo": "Octoprint-Xiaomi-BLE-Thermometer",
-                "current": self._plugin_version,
+    try:
+        def le_advertise_packet_handler(mac, adv_type, data, rssi):
+            data_str = raw_packet_to_str(data)
+            # Check for ATC preamble
+            if data_str[5:10] == '61a18':
+                temp = int(data_str[22:26], 16) / 10
+                hum = int(data_str[26:28], 16)
+                batt = int(data_str[28:30], 16)
+                print("%s - Device: %s Temp: %sc Humidity: %s%% Batt: %s%%" % \
+                     (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), mac, temp, hum, batt))
 
-                # update method: pip
-                "pip": "https://github.com/Rusky/Octoprint-Xiaomi-BLE-Thermometer/archive/{target_version}.zip",
-            }
-        }
+        # Called on new LE packet
+        parse_le_advertising_events(sock,
+                                    handler=le_advertise_packet_handler,
+                                    debug=False)
+    # Scan until Ctrl-C
+    except KeyboardInterrupt:
+        disable_le_scan(sock)
 
-
-# If you want your plugin to be registered within OctoPrint under a different name than what you defined in setup.py
-# ("OctoPrint-PluginSkeleton"), you may define that here. Same goes for the other metadata derived from setup.py that
-# can be overwritten via __plugin_xyz__ control properties. See the documentation for that.
-__plugin_name__ = "Blexiaomi Plugin"
-
-# Starting with OctoPrint 1.4.0 OctoPrint will also support to run under Python 3 in addition to the deprecated
-# Python 2. New plugins should make sure to run under both versions for now. Uncomment one of the following
-# compatibility flags according to what Python versions your plugin supports!
-#__plugin_pythoncompat__ = ">=2.7,<3" # only python 2
-#__plugin_pythoncompat__ = ">=3,<4" # only python 3
-#__plugin_pythoncompat__ = ">=2.7,<4" # python 2 and 3
-
-def __plugin_load__():
-    global __plugin_implementation__
-    __plugin_implementation__ = BlexiaomiPlugin()
-
-    global __plugin_hooks__
-    __plugin_hooks__ = {
-        "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information
-    }
+__plugin_pythoncompat__ = ">=2.7,<4"
+__plugin_implementation__ = XiaomiBLE()

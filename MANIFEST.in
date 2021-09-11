@@ -1,0 +1,4 @@
+include README.md
+recursive-include octoprint_BLEXiaomi/templates *
+recursive-include octoprint_BLEXiaomi/translations *
+recursive-include octoprint_BLEXiaomi/static *

@@ -8,6 +8,7 @@ Requires:
 > sudo apt-get install mercurial libbluetooth-dev libreadline-dev gcc python-dev bluetooth libbluetooth-dev
 
 And pybluez Library running on python >=3.6:
+
 > sudo pip3 install pybluez
 
 

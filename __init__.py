@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 import sys
+
 from datetime import datetime
 import bluetooth._bluetooth as bluez
-
 from bluetooth_utils import (toggle_device, enable_le_scan,
                              parse_le_advertising_events,
                              disable_le_scan, raw_packet_to_str)
+from __future__ import absolute_import, unicode_literals
+import octoprint.plugin
+
+
+class HelloWorldPlugin(octoprint.plugin.StartupPlugin):
+    def on_after_startup(self):
+        self._logger.info("Octoprint - XiaomiBLE Started OWO")
+        
 
 # Use 0 for hci0
 dev_id = 0

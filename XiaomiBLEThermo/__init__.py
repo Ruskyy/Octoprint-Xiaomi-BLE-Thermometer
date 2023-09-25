@@ -6,7 +6,7 @@ import bluetooth as bluez
 import octoprint.plugin
 from octoprint.util import RepeatedTimer
 
-from bluetooth_utils import (disable_le_scan, enable_le_scan,
+from .bluetooth_utils import (disable_le_scan, enable_le_scan,
                              parse_le_advertising_events, raw_packet_to_str,
                              toggle_device)
 

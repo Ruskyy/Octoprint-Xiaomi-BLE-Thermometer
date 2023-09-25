@@ -1,9 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 
-from datetime import datetime
-
 import bluetooth as bluez
 import octoprint.plugin
+from datetime import datetime
 from octoprint.util import RepeatedTimer
 
 from .bluetooth_utils import (disable_le_scan, enable_le_scan,
@@ -22,17 +21,17 @@ class XiaomiBLEThermo(octoprint.plugin.StartupPlugin,
 
     def on_after_startup(self):
         self._logger.info("XiaomiBLEThermo plugin started!")
+        self._logger.info("\033[94m[Bluetooth]\033[0m XiaomiBLEThermo plugin started!")
 
     def get_settings_defaults(self):
         return dict(
-            url="https://en.wikipedia.org/wiki/Hello_world",
             devid="0"
         )
 
     def get_template_configs(self):
         return [
-            dict(type="navbar", custom_bindings=False, template="navbar_ble_thermometer.jinja2"),
-            dict(type="settings", name="BLE Thermometer", custom_bindings=False),
+            dict(type="navbar", custom_bindings=False, template="navbar_blexiaomi.jinja2"),
+            dict(type="settings", name="BLE Thermometer",template="blexiaomi_settings.jinja2", custom_bindings=False),
         ]
 
     def get_template_vars(self):
@@ -55,8 +54,12 @@ class XiaomiBLEThermo(octoprint.plugin.StartupPlugin,
         try:
             def le_advertise_packet_handler(mac, adv_type, data, rssi):
                 data_str = raw_packet_to_str(data)
-                # Check for ATC preamble
-                if data_str[5:10] == "61a18":
+                
+                # Specify the desired MAC address to filter
+                desired_mac = self._settings.get(["mac_address"])
+
+                # Check if the received MAC address matches the desired MAC address
+                if mac == desired_mac and data_str[5:10] == "61a18":
                     temp = int(data_str[22:26], 16) / 10
                     hum = int(data_str[26:28], 16)
                     batt = int(data_str[28:30], 16)
@@ -72,6 +75,15 @@ class XiaomiBLEThermo(octoprint.plugin.StartupPlugin,
                             temp,
                             hum,
                             batt,
+                        )
+                    )
+                else:
+                    # No valid BLE data, set values to "N/A"
+                    self.latest_ble_data = None
+                    self._logger.info(
+                        "%s - No valid BLE data received for device: %s" % (
+                            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                            mac
                         )
                     )
 

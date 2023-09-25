@@ -1,0 +1,32 @@
+<script>
+$(function() {
+    function updateNavbarData() {
+        $.ajax({
+            url: BASEURL + "plugin/bledata",
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                // Update icons and add tooltips
+                var temperatureText = data.temperature === "N/A" ? "Ambient Temperature: N/A" : "Ambient Temperature: " + data.temperature + "°C";
+                var humidityText = data.humidity === "N/A" ? "Temperature Humidity: N/A" : "Temperature Humidity: " + data.humidity + "%";
+                
+                $(".navbar-icon.temperature").attr("data-original-title", temperatureText);
+                $(".navbar-icon.humidity").attr("data-original-title", humidityText);
+                // Trigger tooltips to update
+                $('[data-toggle="tooltip"]').tooltip('update');
+            }
+        });
+    }
+
+    // Update data every 5 seconds (adjust the interval as needed)
+    setInterval(updateNavbarData, 5000);
+});
+</script>
+
+<!-- Icons with tooltips -->
+<span class="navbar-icon temperature" data-toggle="tooltip" data-placement="bottom">
+    <i class="fas fa-thermometer-half"></i>
+</span>
+<span class="navbar-icon humidity" data-toggle="tooltip" data-placement="bottom">
+    <i class="fas fa-tint"></i>
+</span>

@@ -29,7 +29,7 @@ import socket
 from errno import EALREADY
 
 # import PyBluez
-import bluetooth._bluetooth as bluez
+import bluetooth as bluez
 
 __all__ = ('toggle_device', 'set_scan',
            'enable_le_scan', 'disable_le_scan', 'parse_le_advertising_events',

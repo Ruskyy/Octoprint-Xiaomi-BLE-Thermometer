@@ -4,7 +4,7 @@ LE advertisement packets, and prints a colored diff of data on data changes.
 """
 import sys
 import struct
-import bluetooth._bluetooth as bluez
+import bluetooth as bluez
 
 from bluetooth_utils import (toggle_device,
                              enable_le_scan, parse_le_advertising_events,

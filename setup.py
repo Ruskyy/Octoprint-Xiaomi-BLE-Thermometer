@@ -14,7 +14,7 @@ plugin_package = "XiaomiBLEThermo"
 plugin_name = "Octoprint-Xiaomi-BLE-Thermometer"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "0.1.0"
+plugin_version = "0.1.1"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
@@ -33,7 +33,11 @@ plugin_url = "https://github.com/Ruskyy/Octoprint-Xiaomi-BLE-Thermometer"
 plugin_license = "AGPLv3"
 
 # Any additional requirements besides OctoPrint should be listed here
-plugin_requires = ['pybluez']
+# Define the plugin_requires list with custom source for pybluez
+plugin_requires = [
+    'git+https://github.com/pybluez/pybluez.git@master'
+]
+#Successfully installed PyBluez-0.30
 
 ### --------------------------------------------------------------------------------------------------------------------
 ### More advanced options that you usually shouldn't have to touch follow after this point

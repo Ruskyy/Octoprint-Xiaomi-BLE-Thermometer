@@ -9,7 +9,6 @@ from .bluetooth_utils import (disable_le_scan, enable_le_scan,
                              parse_le_advertising_events, raw_packet_to_str,
                              toggle_device)
 
-
 class XiaomiBLEThermo(octoprint.plugin.StartupPlugin,
                 octoprint.plugin.TemplatePlugin,
                 octoprint.plugin.SettingsPlugin):
@@ -17,14 +16,14 @@ class XiaomiBLEThermo(octoprint.plugin.StartupPlugin,
     def __init__(self):
         super(XiaomiBLEThermo, self).__init__()
         self.latest_ble_data = None
-        self.dev_id = 0
+        self.dev_id = 0 #0 is default on rasppi
 
     def on_after_startup(self):
         self._logger.info("\033[94m[Bluetooth]\033[0m XiaomiBLEThermo plugin started!")
+        self.start_scan()
 
     def get_settings_defaults(self):
         return dict(
-            devid="0"
         )
 
     def get_template_configs(self):
@@ -105,6 +104,6 @@ class XiaomiBLEThermo(octoprint.plugin.StartupPlugin,
 
 
 
-__plugin_pythoncompat__ = ">=3.8,<4"
+__plugin_pythoncompat__ = ">=3.7,<4"
 __plugin_name__ = "XiaomiBLEThermo"
 __plugin_implementation__ = XiaomiBLEThermo()

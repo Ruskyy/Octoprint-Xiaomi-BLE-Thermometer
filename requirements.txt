@@ -5,6 +5,5 @@
 #
 # works as expected. Requirements can be found in setup.py.
 ###
-git+https://github.com/pybluez/pybluez.git@master
 
-#Successfully installed PyBluez-0.30
+

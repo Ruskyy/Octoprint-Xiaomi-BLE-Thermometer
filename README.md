@@ -3,13 +3,13 @@
 The idea of this plugin is to be able to connect BLE thermometers running the [ATC_MiThermometer](https://github.com/atc1441/ATC_MiThermometer) custom firmware.
 
 
-Requires:
+## Plugin Dependencies
 
-> sudo apt-get install mercurial libbluetooth-dev libreadline-dev gcc python-dev bluetooth libbluetooth-dev
+This plugin relies on the `bluez` and `bluez-tools` packages, which need to be installed using `apt`. To install these packages, run the following commands:
 
-And pybluez Library running on python >=3.6:
+```bash
+sudo apt-get install mercurial libbluetooth-dev libreadline-dev gcc python-dev bluetooth libbluetooth-dev bluez bluez-tools
 
-> sudo pip3 install pybluez
 
 
 |Xiaomi Mijia (LYWSD03MMC) | [Xiaomi Miaomiaoce (MHO-C401)](https://pvvx.github.io/MHO_C401) | [Qingping Temp & RH Monitor (CGG1-Mijia)](https://pvvx.github.io/CGG1) |

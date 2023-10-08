@@ -1,14 +1,21 @@
-# Octoprint-Xiaomi-BLE-Thermometer
-
+# Octoprint-Xiaomi-BLE-Thermometer 
+# ABANDONED
 The idea of this plugin is to be able to connect BLE thermometers running the [ATC_MiThermometer](https://github.com/atc1441/ATC_MiThermometer) custom firmware.
+
+Never got it to work, it seems like there is some incopatibility with the custom firmware, and its beyond my knowledge.
+
 
 
 ## Plugin Dependencies
 
-This plugin relies on the `bluez` and `bluez-tools` packages, which need to be installed using `apt`. To install these packages, run the following commands:
-
 ```bash
-sudo apt-get install mercurial libbluetooth-dev libreadline-dev gcc python-dev bluetooth libbluetooth-dev bluez bluez-tools
+sudo apt-get install mercurial libbluetooth-dev libreadline-dev gcc python-dev bluetooth libbluetooth-dev
+```
+And due to a limitation on permissions inside octoprint the following command must be ran:
+```bash
+sudo usermod -aG bluetooth pi
+sudo reboot
+```
 
 
 

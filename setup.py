@@ -35,7 +35,8 @@ plugin_license = "AGPLv3"
 # Any additional requirements besides OctoPrint should be listed here
 # Define the plugin_requires list with custom source for pybluez
 plugin_requires = [
-    'git+https://github.com/pybluez/pybluez.git@master'
+    "PyBluez==0.30",
+    "bleak",
 ]
 #Successfully installed PyBluez-0.30
 
@@ -63,7 +64,12 @@ plugin_ignored_packages = []
 # Example:
 #     plugin_requires = ["someDependency==dev"]
 #     additional_setup_parameters = {"dependency_links": ["https://github.com/someUser/someRepo/archive/master.zip#egg=someDependency-dev"]}
-additional_setup_parameters = {}
+additional_setup_parameters = {
+    "dependency_links": [
+        "git+https://github.com/pybluez/pybluez.git@master#egg=PyBluez-0.30",
+        # Add other dependency links if needed
+    ],
+}
 
 ########################################################################################################################
 

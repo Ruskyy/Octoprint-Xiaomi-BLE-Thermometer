@@ -1,16 +1,28 @@
-/*
- * View model for Octoprint-Xiaomi-BLE-Thermometer
- *
- * Author: Sergio
- * License: AGPLv3
- */
 $(function() {
     function BlexiaomiViewModel(parameters) {
         var self = this;
 
-        // assign the injected parameters, e.g.:
+        // Assign the injected parameters, e.g.:
         // self.loginStateViewModel = parameters[0];
         // self.settingsViewModel = parameters[1];
+
+        // Function to update the navbar data
+        function updateNavbarData() {
+            $.ajax({
+                url: BASEURL + "plugin/bledata",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    // Update temperature and humidity values
+                    $(".temperature-value").text(data.temperature === "N/A" ? "-- °C" : data.temperature + "°C");
+                    $(".humidity-value").text(data.humidity === "N/A" ? "-- %" : data.humidity + "%");
+                    
+                }
+            });
+        }
+
+        // Call updateNavbarData every 5 seconds (5000 milliseconds)
+        setInterval(updateNavbarData, 5000);
 
         // TODO: Implement your plugin's view model here.
     }

@@ -25,6 +25,7 @@ import sys
 import struct
 import fcntl
 import array
+import subprocess
 import socket
 from errno import EALREADY
 
@@ -77,34 +78,13 @@ FILTER_POLICY_SCAN_AND_CONN_WHITELIST = 0x03
 
 
 def toggle_device(dev_id, enable):
-    """
-    Power ON or OFF a bluetooth device.
-
-    :param dev_id: Device id.
-    :type dev_id: ``int``
-    :param enable: Whether to enable of disable the device.
-    :type enable: ``bool``
-    """
-    hci_sock = socket.socket(socket.AF_BLUETOOTH,
-                             socket.SOCK_RAW,
-                             socket.BTPROTO_HCI)
-    print("Power %s bluetooth device %d" % ('ON' if enable else 'OFF', dev_id))
-    # di = struct.pack("HbBIBBIIIHHHH10I", dev_id, *((0,) * 22))
-    # fcntl.ioctl(hci_sock.fileno(), bluez.HCIGETDEVINFO, di)
-    req_str = struct.pack("H", dev_id)
-    request = array.array("b", req_str)
+    action = "up" if enable else "down"
+    cmd = f"hciconfig hci{dev_id} {action}"
+    
     try:
-        fcntl.ioctl(hci_sock.fileno(),
-                    bluez.HCIDEVUP if enable else bluez.HCIDEVDOWN,
-                    request[0])
-    except IOError as e:
-        if e.errno == EALREADY:
-            print("Bluetooth device %d is already %s" % (
-                  dev_id, 'enabled' if enable else 'disabled'))
-        else:
-            raise
-    finally:
-        hci_sock.close()
+        subprocess.run(cmd, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error toggling Bluetooth device: {e}")
 
 
 # Types of bluetooth scan
